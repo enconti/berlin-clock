@@ -25,9 +25,11 @@ pipeline {
                     sh "mvn sonar:sonar -Dsonar.host.url=${env.SONARQUBE_HOST}"
             }
         }
-        stage('deploy') {
-            steps {
-                    sh "mvn deploy -DskipTests"
+        stage ('deploy'){
+            steps{
+                configFileProvider([configFile(fileId: 'our_settings', variable: 'SETTINGS')]) {
+                    sh "mvn -s $SETTINGS deploy -DskipTests -Dartifactory_url=${env.ARTIFACTORY_URL}"
+                }
             }
         }
     }
